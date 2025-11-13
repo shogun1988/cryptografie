@@ -36,7 +36,7 @@ This creates and activates a virtual environment and installs required packages.
 
 ## Usage
 
-Run the main application:
+Run the CLI application:
 
 ```powershell
 python main.py
@@ -71,6 +71,24 @@ python main.py
 # choose 1
 # Enter file path: sample_files\sample.txt
 ```
+
+## GUI (User-Friendly Interface)
+
+You can also run the graphical UI built with Tkinter. No extra packages are required beyond a standard Python install on Windows.
+
+```powershell
+python gui.py
+```
+
+The GUI provides tabs for:
+
+- Hash File: Select a file and compute its SHA hash.
+- Check Integrity: Select two files and compare their hashes.
+- AES: Enter a message to encrypt/decrypt and view key, ciphertext, and plaintext.
+- RSA: Enter a message to encrypt/decrypt and view ciphertext and plaintext.
+- Password Manager: Check strength, hash the password, then verify by re-entering it.
+
+Note: The GUI imports the same project functions from the `modules` package used by `main.py`. Ensure a `modules/` folder exists alongside `gui.py` and `main.py` containing `hash.py`, `encryption.py`, and `password.py` with the expected functions.
 
 ## Notes & Security
 
