@@ -34,6 +34,14 @@ class CryptoApp(tk.Tk):
         self.geometry("820x560")
         self.minsize(760, 520)
 
+        # Palette
+        self.COL_BG = "#EFECE3"
+        self.COL_ACCENT = "#8FABD4"
+        self.COL_PRIMARY = "#4A70A9"
+        self.COL_FG = "#000000"
+
+        self._apply_theme()
+
         self._hashed_password = None
 
         notebook = ttk.Notebook(self)
@@ -56,6 +64,38 @@ class CryptoApp(tk.Tk):
         self._build_aes_tab()
         self._build_rsa_tab()
         self._build_password_tab()
+    def _apply_theme(self):
+        style = ttk.Style(self)
+        try:
+            style.theme_use('clam')
+        except Exception:
+            pass
+
+        # Root background
+        self.configure(bg=self.COL_BG)
+
+        # Base widgets
+        style.configure('TFrame', background=self.COL_BG)
+        style.configure('TLabel', background=self.COL_BG, foreground=self.COL_FG)
+        style.configure('TCheckbutton', background=self.COL_BG, foreground=self.COL_FG)
+
+        # Buttons
+        style.configure('TButton', background=self.COL_ACCENT, foreground=self.COL_FG)
+        style.map('TButton',
+                  background=[('active', self.COL_PRIMARY), ('pressed', self.COL_PRIMARY)],
+                  foreground=[('active', self.COL_BG), ('pressed', self.COL_BG)])
+
+        # Entry/Spinbox fields
+        style.configure('TEntry', fieldbackground='#FFFFFF', foreground=self.COL_FG)
+        style.configure('TSpinbox', fieldbackground='#FFFFFF', foreground=self.COL_FG)
+
+        # Notebook + tabs
+        style.configure('TNotebook', background=self.COL_BG, bordercolor=self.COL_PRIMARY)
+        style.configure('TNotebook.Tab', background=self.COL_ACCENT, foreground=self.COL_FG)
+        style.map('TNotebook.Tab',
+                  background=[('selected', self.COL_PRIMARY)],
+                  foreground=[('selected', self.COL_BG)])
+
 
     # ---------- Shared helpers ----------
     def _browse_for_file(self, entry: ttk.Entry, title: str = "Select file"):
@@ -90,7 +130,17 @@ class CryptoApp(tk.Tk):
         out_lbl = ttk.Label(frm, text="Result:")
         out_lbl.grid(row=3, column=0, sticky="w")
 
-        self.hash_out = tk.Text(frm, height=6, wrap=tk.WORD)
+        self.hash_out = tk.Text(
+            frm,
+            height=6,
+            wrap=tk.WORD,
+            bg=self.COL_BG,
+            fg=self.COL_FG,
+            insertbackground=self.COL_PRIMARY,
+            highlightbackground=self.COL_PRIMARY,
+            highlightcolor=self.COL_PRIMARY,
+            highlightthickness=1,
+        )
         self.hash_out.grid(row=4, column=0, columnspan=2, sticky="nsew")
 
         frm.columnconfigure(0, weight=1)
@@ -125,7 +175,17 @@ class CryptoApp(tk.Tk):
         ttk.Button(frm, text="Compare Integrity", command=self._do_integrity).grid(row=4, column=0, pady=(10, 8), sticky="w")
 
         ttk.Label(frm, text="Result:").grid(row=5, column=0, sticky="w")
-        self.int_out = tk.Text(frm, height=6, wrap=tk.WORD)
+        self.int_out = tk.Text(
+            frm,
+            height=6,
+            wrap=tk.WORD,
+            bg=self.COL_BG,
+            fg=self.COL_FG,
+            insertbackground=self.COL_PRIMARY,
+            highlightbackground=self.COL_PRIMARY,
+            highlightcolor=self.COL_PRIMARY,
+            highlightthickness=1,
+        )
         self.int_out.grid(row=6, column=0, columnspan=2, sticky="nsew")
 
         frm.columnconfigure(0, weight=1)
@@ -149,13 +209,33 @@ class CryptoApp(tk.Tk):
         frm.pack(fill=tk.BOTH, expand=True)
 
         ttk.Label(frm, text="Message:").grid(row=0, column=0, sticky="w")
-        self.aes_msg = tk.Text(frm, height=4, wrap=tk.WORD)
+        self.aes_msg = tk.Text(
+            frm,
+            height=4,
+            wrap=tk.WORD,
+            bg=self.COL_BG,
+            fg=self.COL_FG,
+            insertbackground=self.COL_PRIMARY,
+            highlightbackground=self.COL_PRIMARY,
+            highlightcolor=self.COL_PRIMARY,
+            highlightthickness=1,
+        )
         self.aes_msg.grid(row=1, column=0, columnspan=2, sticky="nsew")
 
         ttk.Button(frm, text="Encrypt / Decrypt", command=self._do_aes).grid(row=2, column=0, pady=(10, 8), sticky="w")
 
         ttk.Label(frm, text="Output:").grid(row=3, column=0, sticky="w")
-        self.aes_out = tk.Text(frm, height=10, wrap=tk.WORD)
+        self.aes_out = tk.Text(
+            frm,
+            height=10,
+            wrap=tk.WORD,
+            bg=self.COL_BG,
+            fg=self.COL_FG,
+            insertbackground=self.COL_PRIMARY,
+            highlightbackground=self.COL_PRIMARY,
+            highlightcolor=self.COL_PRIMARY,
+            highlightthickness=1,
+        )
         self.aes_out.grid(row=4, column=0, columnspan=2, sticky="nsew")
 
         frm.columnconfigure(0, weight=1)
@@ -186,13 +266,33 @@ class CryptoApp(tk.Tk):
         frm.pack(fill=tk.BOTH, expand=True)
 
         ttk.Label(frm, text="Message:").grid(row=0, column=0, sticky="w")
-        self.rsa_msg = tk.Text(frm, height=4, wrap=tk.WORD)
+        self.rsa_msg = tk.Text(
+            frm,
+            height=4,
+            wrap=tk.WORD,
+            bg=self.COL_BG,
+            fg=self.COL_FG,
+            insertbackground=self.COL_PRIMARY,
+            highlightbackground=self.COL_PRIMARY,
+            highlightcolor=self.COL_PRIMARY,
+            highlightthickness=1,
+        )
         self.rsa_msg.grid(row=1, column=0, columnspan=2, sticky="nsew")
 
         ttk.Button(frm, text="Encrypt / Decrypt", command=self._do_rsa).grid(row=2, column=0, pady=(10, 8), sticky="w")
 
         ttk.Label(frm, text="Output:").grid(row=3, column=0, sticky="w")
-        self.rsa_out = tk.Text(frm, height=10, wrap=tk.WORD)
+        self.rsa_out = tk.Text(
+            frm,
+            height=10,
+            wrap=tk.WORD,
+            bg=self.COL_BG,
+            fg=self.COL_FG,
+            insertbackground=self.COL_PRIMARY,
+            highlightbackground=self.COL_PRIMARY,
+            highlightcolor=self.COL_PRIMARY,
+            highlightthickness=1,
+        )
         self.rsa_out.grid(row=4, column=0, columnspan=2, sticky="nsew")
 
         frm.columnconfigure(0, weight=1)
@@ -262,7 +362,17 @@ class CryptoApp(tk.Tk):
         ttk.Button(frm, text="Verify", command=self._verify_password).grid(row=7, column=1, sticky="w")
 
         ttk.Label(frm, text="Output:").grid(row=8, column=0, sticky="w", pady=(10, 0))
-        self.pw_out = tk.Text(frm, height=8, wrap=tk.WORD)
+        self.pw_out = tk.Text(
+            frm,
+            height=8,
+            wrap=tk.WORD,
+            bg=self.COL_BG,
+            fg=self.COL_FG,
+            insertbackground=self.COL_PRIMARY,
+            highlightbackground=self.COL_PRIMARY,
+            highlightcolor=self.COL_PRIMARY,
+            highlightthickness=1,
+        )
         self.pw_out.grid(row=9, column=0, columnspan=2, sticky="nsew")
 
         frm.columnconfigure(0, weight=1)
