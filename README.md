@@ -126,6 +126,8 @@ The GUI provides tabs for:
 - AES: Enter a message to encrypt/decrypt and view key, ciphertext, and plaintext.
 - RSA: Enter a message to encrypt/decrypt and view ciphertext and plaintext.
 - Password Manager: Check strength, hash the password, then verify by re-entering it.
+  - Includes a secure password generator with a length control (12–64), a Generate button, and a Copy button to place the password on the clipboard.
+  - You can toggle visibility (Show/Hide) and choose which character sets to include (a-z, A-Z, 0-9, symbols).
 
 Note: The GUI imports the same project functions from the `modules` package used by `main.py`. Ensure a `modules/` folder exists alongside `gui.py` and `main.py` containing `hash.py`, `encryption.py`, and `password.py` with the expected functions.
 

@@ -1,5 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
+import secrets
+import string
+import random
 
 # Try to reuse existing app logic; fall back to a helpful error if missing
 MISSING_MODULES = False
@@ -224,6 +227,27 @@ class CryptoApp(tk.Tk):
 
         ttk.Button(frm, text="Check Strength", command=self._check_strength).grid(row=1, column=1, sticky="w")
 
+        # Password generator controls
+        ttk.Label(frm, text="Length:").grid(row=0, column=2, sticky="e", padx=(8, 2))
+        self.gen_length = tk.IntVar(value=16)
+        ttk.Spinbox(frm, from_=12, to=64, textvariable=self.gen_length, width=5).grid(row=1, column=2, sticky="w")
+        ttk.Button(frm, text="Generate", command=self._generate_password).grid(row=1, column=3, sticky="w", padx=(6, 0))
+        ttk.Button(frm, text="Copy", command=self._copy_password).grid(row=1, column=4, sticky="w", padx=(6, 0))
+
+        # Show/Hide password toggle
+        self.show_pw = tk.BooleanVar(value=False)
+        ttk.Checkbutton(frm, text="Show", variable=self.show_pw, command=self._toggle_show_password).grid(row=1, column=5, sticky="w", padx=(8, 0))
+
+        # Character set options for generator
+        self.opt_lower = tk.BooleanVar(value=True)
+        self.opt_upper = tk.BooleanVar(value=True)
+        self.opt_digits = tk.BooleanVar(value=True)
+        self.opt_symbols = tk.BooleanVar(value=True)
+        ttk.Checkbutton(frm, text="a-z", variable=self.opt_lower).grid(row=1, column=6, sticky="w", padx=(6, 0))
+        ttk.Checkbutton(frm, text="A-Z", variable=self.opt_upper).grid(row=1, column=7, sticky="w", padx=(6, 0))
+        ttk.Checkbutton(frm, text="0-9", variable=self.opt_digits).grid(row=1, column=8, sticky="w", padx=(6, 0))
+        ttk.Checkbutton(frm, text="!@#", variable=self.opt_symbols).grid(row=1, column=9, sticky="w", padx=(6, 0))
+
         self.pw_strength_lbl = ttk.Label(frm, text="Strength: —")
         self.pw_strength_lbl.grid(row=2, column=0, columnspan=2, sticky="w", pady=(6, 4))
 
@@ -278,6 +302,84 @@ class CryptoApp(tk.Tk):
             self._set_text(self.pw_out, f"Verification result: {verdict}\n\nStored hash:\n{self._hashed_password}")
         except Exception as e:
             messagebox.showerror("Verify failed", str(e))
+
+    def _generate_password(self):
+        # Character sets
+        lowers = string.ascii_lowercase
+        uppers = string.ascii_uppercase
+        digits = string.digits
+        # A safe punctuation subset (avoid quotes/backslashes for convenience)
+        symbols = "!@#$%^&*()-_=+[]{};:,.?/"  # exclude '"`\ for fewer escapes
+
+        length = max(12, min(int(self.gen_length.get() or 16), 64))
+
+        # Respect user-selected sets
+        selected_sets = []
+        if getattr(self, 'opt_lower', None) is None or getattr(self, 'opt_upper', None) is None:
+            # Fallback in unlikely case options missing
+            selected_sets = [lowers, uppers, digits, symbols]
+        else:
+            if self.opt_lower.get():
+                selected_sets.append(lowers)
+            if self.opt_upper.get():
+                selected_sets.append(uppers)
+            if self.opt_digits.get():
+                selected_sets.append(digits)
+            if self.opt_symbols.get():
+                selected_sets.append(symbols)
+
+        if not selected_sets:
+            messagebox.showwarning("No character sets", "Select at least one character set (a-z, A-Z, 0-9, symbols).")
+            return
+
+        pool = "".join(selected_sets)
+        # Ensure at least one from each selected set
+        password_chars = [secrets.choice(s) for s in selected_sets]
+        # Fill the rest
+        remaining = length - len(password_chars)
+        password_chars += [secrets.choice(pool) for _ in range(remaining)]
+        # Shuffle securely
+        random.SystemRandom().shuffle(password_chars)
+        pw = "".join(password_chars)
+
+        # Set into the entry and copy to clipboard
+        self.pw_entry.delete(0, tk.END)
+        self.pw_entry.insert(0, pw)
+        try:
+            self.clipboard_clear()
+            self.clipboard_append(pw)
+        except Exception:
+            pass
+
+        # Optionally check strength automatically
+        try:
+            result = check_strength(pw)
+            self.pw_strength_lbl.configure(text=f"Strength: {result}")
+        except Exception:
+            # If modules are missing, silently ignore
+            pass
+
+    def _toggle_show_password(self):
+        show_char = "" if self.show_pw.get() else "*"
+        try:
+            self.pw_entry.configure(show=show_char)
+            # May not exist yet during init, so guard
+            if hasattr(self, 'pw_verify_entry') and self.pw_verify_entry is not None:
+                self.pw_verify_entry.configure(show=show_char)
+        except Exception:
+            pass
+
+    def _copy_password(self):
+        pw = self.pw_entry.get()
+        if not pw:
+            messagebox.showwarning("Nothing to copy", "Password field is empty.")
+            return
+        try:
+            self.clipboard_clear()
+            self.clipboard_append(pw)
+            messagebox.showinfo("Copied", "Password copied to clipboard.")
+        except Exception:
+            messagebox.showwarning("Copy failed", "Could not copy to clipboard.")
 
 
 if __name__ == "__main__":
