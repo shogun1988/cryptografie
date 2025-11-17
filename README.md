@@ -135,9 +135,6 @@ Note: The GUI imports the same project functions from the `modules` package used
 
 ![GUI Tabs](docs/screenshot.png)
 
-How to capture on Windows:
-- Open the GUI (`python gui.py`), press `Win + Shift + S`, select the window, and paste/save as `docs/gui-screenshot.png`.
-
 ## Notes & Security
 
 - This toolkit is intended for learning and small demos only. It prints keys and hashes to the console for visibility.
